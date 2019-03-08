@@ -1,0 +1,13 @@
+# The command line in commands will be executed in order
+commands:
+  -
+    name: <command-name-1>
+    cmd: <command line here>
+  -
+    name: <command-name-2>
+    cmd: <command line here>
+  -
+    name: <command-name-n>
+    cmd: <command line here>
+
+output: <target file name to output>
