@@ -2,4 +2,31 @@
 # oscillo
 
 Record the system load at the execution of the command line and display it graphically
-记录命令行执行过程中产生的系统负载并以图形的方式展示
+
+![demo](https://raw.githubusercontent.com/raomuyang/cmd-oscillo/master/demo/metrix.log.png)
+
+## Usage
+
+```shell
+pip install oscillo
+
+oscillo -c </path/to/config-file.yml> [-g]
+```
+
+## Config file
+
+The command line in commands will be executed in order
+
+```yml
+# Demo
+commands:
+  -
+    name: gzip
+    cmd: gzip big-file
+  
+  -
+    name: tar
+    cmd: tar -zcf tmp.tar.gz big-file
+
+output: gzip-and-tar-gz
+```
