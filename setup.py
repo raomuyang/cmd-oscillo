@@ -4,7 +4,10 @@ try:
 except ImportError:
     import distutils.core as setuptools
 
-__VERSION__ = '0.1.0'
+__VERSION__ = '0.1.1'
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 requirements = [
     'psutil==5.2.2',
@@ -25,7 +28,9 @@ setuptools.setup(
     author_email="raomengnan@gmail.com",
     maintainer='Rao Mengnan',
     maintainer_email='raomengnan@gmail.com',
-    url='https://blog.atomicer.cn',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url='https://github.com/raomuyang/cmd-oscillo',
     packages=packages,
     package_data={'': ['LICENSE', 'requirements.txt']},
     classifiers=[

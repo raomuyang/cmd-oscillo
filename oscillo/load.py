@@ -24,23 +24,6 @@ if not os.environ.get('DISPLAY'):
 import matplotlib.pyplot as plt
 
 
-
-"""
-# demo
-
-commands:
-  -
-    name: gzip
-    cmd: gzip /path/to/big/file
-  
-  -
-    name: tar
-    cmd: tar -zcf tmp.tar.gz /path/to/file
-
-output: gzip-and-tar-gz
-"""
-
-
 class Stopwatch(object):
 
     def __init__(self, pid):
@@ -172,7 +155,7 @@ def main():
 
     args = parser.parse_args()
 
-    desc = ('Record the system load at the execution of the command line and display it graphically')
+    desc = ('Record the system load at the execution of the command line and display it graphically\n')
 
     _conf_file = args.config
     _load_log_file = args.load
