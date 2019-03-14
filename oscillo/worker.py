@@ -144,8 +144,8 @@ class RunnerWithPrintTitle(Runner):
         self.process.communicate()
 
         elapsed = round(self.stopwatch.elapsed, 3)
-        max_cpu_load = "{}%".format(round(max(self.stopwatch.cpu), 3))
-        max_memory_load = "{}%".format(round(max(self.stopwatch.memory), 3))
+        max_cpu_load = "{}%".format(round(max(self.stopwatch.cpu), 3)) if self.stopwatch.cpu else '0%'
+        max_memory_load = "{}%".format(round(max(self.stopwatch.memory), 3)) if self.stopwatch.memory else '0%'
 
         result_data = [
             ['run', 'elapsed(s)', 'cpu (max)', 'memory (max)', 'return code'],
