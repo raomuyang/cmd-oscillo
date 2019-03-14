@@ -104,27 +104,27 @@ def print_image(summary, output="metrix.png"):
     plt.subplot(121)
     for k in summary:
         result = summary[k]
-        x = np.linspace(0, 1, len(result['cpu']))
+        x = np.linspace(0, int(result['elapsed']), len(result['cpu']))
         y = np.array(result['cpu'])
 
         plt.plot(x, y, label=k, linewidth=2)
 
-    plt.xlabel("Time(30s)")
-    plt.ylabel("CPU percent")
+    plt.xlabel("Time(s)")
+    plt.ylabel("CPU (%)")
     plt.legend(labels=[k for k in summary], loc="best")
-    plt.title("CPU")
+    plt.title("CPU load tracing")
 
     plt.subplot(122)
     for k in summary:
         result = summary[k]
-        x = np.linspace(0, 1, len(result['memory']))
+        x = np.linspace(0, int(result['elapsed']), len(result['memory']))
         y = np.array(result['memory'])
 
         plt.plot(x, y, label=k, linewidth=2)
-    plt.xlabel("Time(30s)")
-    plt.ylabel("Memory percent")
+    plt.xlabel("Time(s)")
+    plt.ylabel("Memory (%)")
     plt.legend(labels=[k for k in summary], loc="best")
-    plt.title("Memory")
+    plt.title("Memory load tracing")
 
     if not output.endswith('.png'):
         output += '.png'
