@@ -3,19 +3,15 @@
 
 from __future__ import print_function
 
-import json
 import os
 import subprocess
 import sys
 import threading
 import time
 
-import psutil
-import yaml
-import argparse
-
-import numpy as np
 import matplotlib
+import numpy as np
+import psutil
 
 if not os.environ.get('DISPLAY'):
     print('DISPLAY not found. Using non-interactive Agg backend')
@@ -133,53 +129,3 @@ def print_image(summary, output="metrix.png"):
     if not output.endswith('.png'):
         output += '.png'
     plt.savefig(output)
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-g', '--globals',
-        action='store_true',
-        default=False,
-        help='Watch global load (cpu, memory). Default is `False`'
-    )
-    parser.add_argument(
-        '-c', '--config',
-        help='config file: which specified the command list and the name of metrix text file'
-    )
-
-    parser.add_argument(
-        '-l', '--load',
-        help='reload metrics file and print to image'
-    )
-
-    args = parser.parse_args()
-
-    desc = ('Record the system load at the execution of the command line and display it graphically\n')
-
-    _conf_file = args.config
-    _load_log_file = args.load
-
-    if not _conf_file and not _load_log_file:
-        print(desc)
-        parser.print_help()
-        sys.exit(1)
-
-    if _load_log_file:
-        with open(_load_log_file, "r") as f:
-            _summary = json.load(f)
-        _output = _load_log_file
-
-    else:
-        with open(_conf_file, "r") as f:
-            _config = yaml.load(f)
-
-        _output = _config.get("output", 'metrix')
-        _summary = run_commands(_config, args.globals)
-        with open(_output + ".log", "w") as f:
-            json.dump(_summary, f)
-    print_image(_summary, _output)
-
-
-if __name__ == '__main__':
-    main()
