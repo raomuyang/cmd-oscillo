@@ -16,12 +16,3 @@ def get_table(table_data, title=None, ascii=False):
         return AsciiTable(table_data, title)
     else:
         return SingleTable(table_data, title)
-
-if __name__ == '__main__':
-    table_data = [
-        ['test', ''],
-    ]
-    t = get_table(table_data, title=' execute command ')
-    wrapped_string = wrap_long_text_to_table(t, "test")
-    t.table_data[0][0] = wrapped_string
-    print t.table
