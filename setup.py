@@ -14,6 +14,7 @@ requirements = [
     'matplotlib==2.1.0',
     'numpy==1.13.1',
     'PyYAML==3.13',
+    'terminaltables==3.1.0'
 ]
 
 test_requirements = ['mock']

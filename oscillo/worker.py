@@ -13,6 +13,8 @@ import matplotlib
 import numpy as np
 import psutil
 
+from . import table
+
 if not os.environ.get('DISPLAY'):
     print('DISPLAY not found. Using non-interactive Agg backend')
     matplotlib.use('Agg')
@@ -67,38 +69,114 @@ class Stopwatch(object):
     def memory(self):
         return self.memory_percent
 
+    @property
+    def current_cpu(self):
+        if not self.cpu_percent:
+            return 0
+        return self.cpu_percent[-1]
+
+    @property
+    def current_memory(self):
+        if not self.memory_percent:
+            return 0
+        return self.memory_percent[-1]
+
+
+class Runner(object):
+
+    def __init__(self, name, cmd, global_mode):
+        self.name = name
+        self.cmd = cmd
+        self.global_mode = global_mode
+        self.stopwatch = None
+
+    @property
+    def process_id(self):
+        if self.global_mode:
+            return -1
+        else:
+            return self._process().pid
+
+    def run(self):
+        self.stopwatch = Stopwatch(self.process_id)
+        thread = threading.Thread(target=self.stopwatch.start)
+        thread.setDaemon(True)
+        thread.start()
+
+        self._run_subprocess()
+
+        self.stopwatch.stop()
+
+        return {
+            "cpu": self.stopwatch.cpu,
+            "memory": self.stopwatch.memory,
+            "elapsed": self.stopwatch.elapsed
+        }
+
+    def _run_subprocess(self):
+        raise NotImplementedError
+
+    def _process(self):
+        raise NotImplementedError
+
+
+class RunnerWithPrintTitle(Runner):
+    def __init__(self, name, cmd, index, global_mode=False):
+        super(RunnerWithPrintTitle, self).__init__(name, cmd, global_mode)
+        self.index = index
+        self.process = subprocess.Popen(self.cmd,
+                                        stdin=sys.stdin,
+                                        stdout=sys.stdout,
+                                        stderr=sys.stderr,
+                                        shell=True
+                                        )
+
+    def _run_subprocess(self):
+        table_data = [
+            [str(self.index), ''],
+        ]
+        t = table.get_table(table_data, title=' execute command ')
+        wrapped_string = table.wrap_long_text_to_table(t, self.cmd)
+        t.table_data[0][1] = wrapped_string
+
+        print(t.table)
+
+        self.process.communicate()
+
+        elapsed = round(self.stopwatch.elapsed, 3)
+        max_cpu_load = "{}%".format(round(max(self.stopwatch.cpu), 3))
+        max_memory_load = "{}%".format(round(max(self.stopwatch.memory), 3))
+
+        result_data = [
+            ['run', 'elapsed(s)', 'cpu (max)', 'memory (max)', 'return code'],
+            ['', elapsed, max_cpu_load, max_memory_load, self.process.returncode]
+        ]
+        t = table.get_table(result_data, title=' result of command ')
+        wrapped_string = table.wrap_long_text_to_table(t, self.cmd)
+        t.table_data[1][0] = wrapped_string
+        print(t.table)
+
+    def _process(self):
+        return self.process
+
 
 def run_commands(config, global_resource):
-
     commands = config['commands']
 
     summary = {}
 
-    for command in commands:
+    for index, command in enumerate(commands):
+        index += 1
         name = command.get("name")
         cmd = command.get("cmd")
 
-        p = subprocess.Popen(cmd, stderr=sys.stderr,
-                             stdin=sys.stdin, stdout=sys.stdout, shell=True)
-        if global_resource:
-            stopwatch = Stopwatch(-1)
-        else:
-            stopwatch = Stopwatch(p.pid)
-
-        thread = threading.Thread(target=stopwatch.start)
-        thread.setDaemon(True)
-        thread.start()
-        p.communicate()
-        stopwatch.stop()
-
-        result = {"cpu": stopwatch.cpu, "memory": stopwatch.memory,
-                  "elapsed": stopwatch.elapsed}
-        summary[name] = result
+        runner = RunnerWithPrintTitle(name=name, cmd=cmd, index=index,
+                                      global_mode=global_resource)
+        summary[name] = runner.run()
     return summary
 
 
 def print_image(summary, output="metrix.png"):
-
     plt.figure(figsize=(16, 4))
 
     plt.subplot(121)
