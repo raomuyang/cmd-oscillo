@@ -31,7 +31,7 @@ oscillo -c 'test: echo "">1.txt&&md5 1.txt' -o 1.png
 
 ```
 
-* -c 代表将执行一个linux cmd 命令
+* -c 代表将执行一个linux cmd 命令。参数后面可以跟以空格隔开的多个参数
 
 * -o 结果输出文件
 
