@@ -27,7 +27,23 @@ python setup.py install
 * 通过命令行参数启动 / Boot start by command line parameter
 
 ``` 
-oscillo -c 'test-md5:md5 ~/TmpFiles/CL100006359_L01_2_1.fq.gz' 'gz-test: gz  ~/big.bin' -o summary-file
+oscillo -c 'test: echo "">1.txt&&md5 1.txt' -o 1.png
+
+```
+
+* -c 代表将执行一个linux cmd 命令
+
+* -o 结果输出文件
+
+* 会在当前目录下生成一个log 文件。文本结构是json 格式. 数据结构如下
+```
+{
+  "test": {
+            "elapsed": 0.022143125534057617,  //总执行时间
+            "cpu": [], 
+            "memory": []
+          }
+}
 
 ```
 
@@ -59,3 +75,4 @@ commands:
 
 output: gzip-and-tar-gz
 ```
+
