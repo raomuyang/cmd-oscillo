@@ -4,7 +4,7 @@ try:
 except ImportError:
     import distutils.core as setuptools
 
-__VERSION__ = '0.2.2'
+__VERSION__ = '0.2.3'
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
