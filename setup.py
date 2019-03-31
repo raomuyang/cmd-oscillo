@@ -4,15 +4,15 @@ try:
 except ImportError:
     import distutils.core as setuptools
 
-__VERSION__ = '0.2.0'
+__VERSION__ = '0.2.2'
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 requirements = [
-    'psutil==5.2.2',
-    'matplotlib==2.1.0',
-    'numpy==1.13.1',
+    'psutil>=5.2.2',
+    'matplotlib',
+    'numpy>=1.13.1',
     'PyYAML==3.13',
     'terminaltables==3.1.0'
 ]
