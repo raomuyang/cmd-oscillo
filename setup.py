@@ -4,7 +4,7 @@ try:
 except ImportError:
     import distutils.core as setuptools
 
-__VERSION__ = '0.2.3'
+__VERSION__ = '1.0.0'
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -36,7 +36,6 @@ setuptools.setup(
     packages=packages,
     package_data={'': ['LICENSE', 'requirements.txt']},
     classifiers=[
-        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'License :: OSI Approved :: Apache Software License',
         'Intended Audience :: Customer Service',

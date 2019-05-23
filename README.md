@@ -54,8 +54,9 @@ oscillo -c 'gzip: gzip file.ext' -o output-file
 ```
 同时会产生一个`<output-file>.png`文件，`<output-file>`由`-o`参数指定，默认值为`metrix`
 
-如果想对比多个命令对资源的消耗，可以使用 `-c/--commands` 选项指定多条命令, e.g.:
+`-c/--commands` 可以接受多个参数，以空格隔开，任务会线性执行。使用场景：对比多个命令对资源的消耗
 
+e.g.:
 对比`gzip`和`tar`命令对资源的消耗：
 
 ```shell
