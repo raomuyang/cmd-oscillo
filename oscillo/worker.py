@@ -9,20 +9,29 @@ import sys
 import threading
 import time
 
-import matplotlib
 import numpy as np
 import psutil
+from concurrent.futures import ThreadPoolExecutor
 
 from . import table
 
-if not os.environ.get('DISPLAY'):
-    print('DISPLAY not found. Using non-interactive Agg backend')
-    matplotlib.use('Agg')
+try:
+    import matplotlib
+    if not os.environ.get('DISPLAY'):
+        print('DISPLAY not found. Using non-interactive Agg backend')
+        matplotlib.use('Agg')
 
-import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt
+except ImportError:
+    matplotlib = None
+    plt = None
+    print("ATTENTION the module \"matplotlib\" was not installed, "
+          "it would cause the graphics result can't output")
 
 
 class Stopwatch(object):
+    INTERVAL = 1
+    CONCURRENT = 8
 
     def __init__(self, pid):
         self.__is_run = False
@@ -45,10 +54,29 @@ class Stopwatch(object):
             p.memory_percent = lambda: p.virtual_memory().percent
         while self.__is_run:
             try:
-                self.cpu_percent.append(p.cpu_percent(1))
-                self.memory_percent.append(p.memory_percent())
+                self._statistic(p)
             except psutil.NoSuchProcess:
                 break
+
+    def _statistic(self, process):
+
+        if process == psutil:
+            self.cpu_percent.append(process.cpu_percent(1))
+            self.memory_percent.append(process.memory_percent())
+            return
+
+        children = process.children(recursive=True)
+
+        pool = ThreadPoolExecutor(8)
+        s_memory_result = pool.map(lambda p: p.memory_percent(), children)
+        s_cpu_result = pool.map(lambda p: p.cpu_percent(self.INTERVAL), children)
+        pool.shutdown(wait=True)
+
+        cpu_count = sum(s_cpu_result) + process.cpu_percent(self.INTERVAL)
+        memory_count = sum(s_memory_result) + process.memory_percent()
+
+        self.cpu_percent.append(cpu_count)
+        self.memory_percent.append(memory_count)
 
     @property
     def elapsed(self):
@@ -177,6 +205,9 @@ def run_commands(config, global_resource):
 
 
 def print_image(summary, output="metrix.png"):
+    if not plt:
+        print("To get the graphics result, please make sure you have installed the matplotlib:\npip install matplotlib")
+        return
     plt.figure(figsize=(16, 4))
 
     plt.subplot(121)
