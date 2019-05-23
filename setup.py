@@ -11,10 +11,11 @@ with open("README.md", "r") as fh:
 
 requirements = [
     'psutil>=5.2.2',
-    'matplotlib',
     'numpy>=1.13.1',
     'PyYAML==3.13',
-    'terminaltables==3.1.0'
+    'terminaltables==3.1.0',
+    "futures==3.2.0",
+    'matplotlib'
 ]
 
 test_requirements = ['mock']
