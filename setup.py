@@ -12,7 +12,7 @@ with open("README.md", "r") as fh:
 requirements = [
     'psutil>=5.2.2',
     'numpy>=1.13.1',
-    'PyYAML==3.13',
+    'PyYAML==5.4',
     'terminaltables==3.1.0',
     "futures==3.2.0",
     'matplotlib'
